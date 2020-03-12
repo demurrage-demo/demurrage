@@ -1,0 +1,105 @@
+<html>
+<head>
+	<title>Demurrage Calculation</title>
+	<link href="https://fonts.googleapis.com/css?family=Catamaran|Merriweather&display=swap" rel="stylesheet">
+	<style>
+		html *{}
+		body{ font-family: 'Catamaran', serif; background-color: #fff; font-size: 1em; color: #333;
+		}
+		.form{
+		background-color: #fff;
+		max-width: 600px;
+		box-sizing: border-box;
+		margin: 0 auto;
+		position: relative;}
+		h1{text-align: center; font-size: 1.4em; margin: 0px; font-family: 'Catamaran', serif;}
+		h3{font-size: 1.1em; margin: 15px 5px 5px 0px; font-family: 'Merriweather', serif; border-bottom: 1px solid rgba(22, 22, 33, .1);}
+		p{margin: 2px;}
+		label {
+		display: flex;
+		align-items: center;
+		font-size: 1em;
+		}
+		span:after {
+		padding-left: 5px;
+		}
+		input:invalid + span:after {
+		content: '✖';
+		}
+		input:valid+span:after {
+		content: '✓';
+		}
+		.note{font-size: 0.7em; line-height: 1em;}
+		.note:before{content: '🏲';}
+		.bottomline{margin-top: 10px; text-align: right; font-size: 0.7em; color: #333; text-decoration: none;}
+		.bottomline:hover{color: #229;}
+		.bottomline:hover:after{content: ' at umuthan.aktepe @ gmail com';}
+	</style>
+	<script language="JavaScript" type="text/javascript"> 
+	function UpdateResults(){
+		var total_minutes = 0
+		var total_laytime = document.getElementById("total_laytime").value;
+		var date1 = new Date(document.getElementById("L-START").value); 
+		var date2 = new Date(document.getElementById("L-END").value); 
+		var milisecond_difference = date2 - date1; 
+		milisecond_difference = milisecond_difference/60000; 
+		total_minutes += milisecond_difference; 
+		var loading_minutes = milisecond_difference; 
+		var minutes = Math.floor(milisecond_difference % 60);
+		milisecond_difference = milisecond_difference/60; 
+		var hours = Math.floor(milisecond_difference % 24);  
+		var days = Math.floor(milisecond_difference/24);
+		if(milisecond_difference < 0){document.getElementById("loading_port_total").innerHTML = "<b>Error:</b> HDISC can't be earlier than NORT.";}
+		else{document.getElementById("loading_port_total").innerHTML =  '<b>Loading port time used:</b> ' + days + ' days, ' + hours + ' hours, ' + minutes + ' minutes (' + loading_minutes + ' minutes)';}
+		
+		var date1 = new Date(document.getElementById("D-START").value); 
+		var date2 = new Date(document.getElementById("D-END").value); 
+		var milisecond_difference = date2 - date1; 
+		milisecond_difference = milisecond_difference/60000; 
+		total_minutes += milisecond_difference; 
+		var discharging_minutes = milisecond_difference; 
+		var minutes = Math.floor(milisecond_difference % 60);
+		milisecond_difference = milisecond_difference/60; 
+		var hours = Math.floor(milisecond_difference % 24);  
+		var days = Math.floor(milisecond_difference/24);
+		if(milisecond_difference < 0){document.getElementById("discharging_port_total").innerHTML = "<b>Error:</b> HDISC can't be earlier than NORT.";}
+		else{document.getElementById("discharging_port_total").innerHTML = '<b>Discharging port time used:</b> ' + days + ' days, ' + hours + ' hours, ' + minutes + ' minutes (' + discharging_minutes + ' minutes)';}
+		
+		document.getElementById("final_remarks").innerHTML = '<b>Total Used Time:</b> ' + total_minutes + ' minutes (' + (total_minutes/60).toFixed(1) + ' hours)';
+		if(total_minutes/60 > total_laytime)
+		{document.getElementById("demurrage_text").innerHTML = '<b style="color:#a03e1a;">Demurrage:</b> $' + Math.ceil((total_minutes/60 - total_laytime) * (document.getElementById("demurrage").value / 24)).toLocaleString() + ' total for ' + (total_minutes/60 - total_laytime).toFixed(1)  + ' hours';}
+		else{document.getElementById("demurrage_text").innerHTML = '<span style="color:#0b7d0b;">No demurrage.</span>';}
+	};
+	</script> 
+</head>
+<body>
+<form class="form" oninput="UpdateResults();">
+<h1>DEMURRAGE CALCULATOR</h1>
+<h3>Agreement</h3>
+<label>Total Laytime:</label>
+<input type="number" id="total_laytime" placeholder="Hours"/>
+<label>Demurrage:</label>
+<input type="number" id="demurrage" placeholder="$"/>
+<h3>Loading Port</h3>
+<label>START:</label>
+<input type="datetime-local" id="L-START" value="2020-01-01T12:00" autocomplete="off" required>
+<label>END:</label>
+<input type="datetime-local" id="L-END" value="2020-01-01T12:00" autocomplete="off" required>
+<br>
+<h3>Discharging Port</h3>
+<label>START:</label>
+<input type="datetime-local" id="D-START" value="2020-01-01T12:00" autocomplete="off" required>
+<label>END:</label>
+<input type="datetime-local" id="D-END" value="2020-01-01T12:00" autocomplete="off" required>
+<h3>Results</h3>
+<p id="loading_port_total">Waiting for your input...</p>
+<p id="discharging_port_total"></p>
+<p id="final_remarks"></p>
+<p id="demurrage_text"></p>
+<h3>Notes</h3>
+<p class="note">SHINC revisable.</p>
+<p class="note">START is 'NORT' and END is 'HDISC' for tankers.</p>
+<p class="bottomline">Mail Me</p>
+</form>
+</body>
+</html>
